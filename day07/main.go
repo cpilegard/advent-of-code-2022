@@ -17,7 +17,7 @@ func main() {
 }
 
 type directory struct {
-	name     string
+	path     string
 	parent   *directory
 	children []directory
 }
@@ -51,7 +51,7 @@ func P2(input []string) int {
 }
 
 func getDirSizes(input []string) map[string]int {
-	currentDir := &directory{name: "/"}
+	currentDir := &directory{path: "/"}
 	dirSizes := map[string]int{}
 
 	for _, cmd := range input {
@@ -68,7 +68,7 @@ func getDirSizes(input []string) map[string]int {
 
 				// look for directory in currentDir's children
 				for _, dir := range currentDir.children {
-					s := strings.Split(dir.name, "/")
+					s := strings.Split(dir.path, "/")
 					childDirName := s[len(s)-2]
 
 					// set new current directory
@@ -82,25 +82,25 @@ func getDirSizes(input []string) map[string]int {
 			}
 		case "dir":
 			// distinguish between same names in different paths
-			dirName := currentDir.name + cmds[1] + "/"
-			newDir := directory{name: dirName, parent: currentDir}
+			dirName := currentDir.path + cmds[1] + "/"
+			newDir := directory{path: dirName, parent: currentDir}
 			currentDir.children = append(currentDir.children, newDir)
 		default: // is a filename
 			filesize, _ := strconv.Atoi(cmds[0])
 
-			if _, ok := dirSizes[currentDir.name]; !ok {
-				dirSizes[currentDir.name] = filesize
+			if _, ok := dirSizes[currentDir.path]; !ok {
+				dirSizes[currentDir.path] = filesize
 			} else {
-				dirSizes[currentDir.name] += filesize
+				dirSizes[currentDir.path] += filesize
 			}
 
 			// add to parent sizes all the way up
 			parentCursor := currentDir.parent
 			for parentCursor != nil {
-				if _, ok := dirSizes[parentCursor.name]; !ok {
-					dirSizes[parentCursor.name] = filesize
+				if _, ok := dirSizes[parentCursor.path]; !ok {
+					dirSizes[parentCursor.path] = filesize
 				} else {
-					dirSizes[parentCursor.name] += filesize
+					dirSizes[parentCursor.path] += filesize
 				}
 
 				parentCursor = parentCursor.parent
